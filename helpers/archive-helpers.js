@@ -1,5 +1,8 @@
+// ARCHIVE HELPER METHODS
 var fs = require('fs');
+// Node.js's path module
 var path = require('path');
+// access to underscore library (for initialize function)
 var _ = require('underscore');
 
 /*
@@ -9,6 +12,11 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
+// PATHS - an object that contains references to the siteAssets, archivedSites, and list pathnames
+
+// siteAssets: file directory path + /web/public  --> like /foo/bar/baz/asdf/web/public
+// archivedSites: file directory path + /archives/sites  --> like /foo/bar/baz/asdf/archives/sites
+// list: file directory path + /archives/sites.txt --> like /foo/bar/baz/asdf/archives/sites.txt
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
@@ -22,20 +30,44 @@ exports.initialize = function(pathsObj) {
   });
 };
 
+
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
+// ** WORKER SERVER NEEDS ACCESS TO ALL OF THESE FUNCTIONS ** //
+
+// reads URLs in archives/sites.txt
 exports.readListOfUrls = function() {
+  // fs.readFile('/etc/passwd', (err, data) => {
+  //   if (err) throw err;
+  //   console.log(data);
+  // });
 };
 
-exports.isUrlInList = function() {
+// checks paths.list value for presence of particular URL
+// returns a boolean indicating whether or not the URL is in this list of archived sites
+exports.isUrlInList = function(url) {
+  if (!paths.list.includes(url)) {
+    return false;
+  }
+  return true;
 };
 
+// if !isUrlInList, writes URL to list
 exports.addUrlToList = function() {
+
 };
 
-exports.isUrlArchived = function() {
+// checks paths.archivedSites for presence of URL
+// returns a boolean indicating whether or not the URL is in archived sites
+exports.isUrlArchived = function(url) {
+  if (!paths.archivedSites.includes(url)) {
+    return false;
+  }
+  return true;
 };
 
+// retrieves (from the internet) the index.html of the requested URL
 exports.downloadUrls = function() {
+  // fs.write(fd, string[, position[, encoding]], callback);
 };
