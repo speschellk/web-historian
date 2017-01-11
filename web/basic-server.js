@@ -1,3 +1,7 @@
+// WEB SERVER:
+// My job is to interact with the client.
+// I receive requests of URLs from the client and place them in archives/sites.txt
+
 var http = require('http');
 var handler = require('./request-handler');
 var initialize = require('./initialize.js');
@@ -16,4 +20,3 @@ if (module.parent) {
   server.listen(port, ip);
   console.log('Listening on http://' + ip + ':' + port);
 }
-
