@@ -37,11 +37,16 @@ exports.initialize = function(pathsObj) {
 // ** WORKER SERVER NEEDS ACCESS TO ALL OF THESE FUNCTIONS ** //
 
 // reads URLs in archives/sites.txt
-exports.readListOfUrls = function() {
-  // fs.readFile('/etc/passwd', (err, data) => {
-  //   if (err) throw err;
-  //   console.log(data);
-  // });
+exports.readListOfUrls = function(cb) {
+  fs.readFile('../archives/sites/sites.txt', 'utf8', function(err, data) {
+    console.log('in fs.readFile');
+    if (!err) {
+      console.log(data);
+    }
+    console.log('error');
+    done(err);
+  });
+
 };
 
 // checks paths.list value for presence of particular URL
@@ -54,13 +59,13 @@ exports.isUrlInList = function(url) {
 };
 
 // if !isUrlInList, writes URL to list
-exports.addUrlToList = function() {
-
+exports.addUrlToList = function(url, cb) {
+  fs.writeFile('../archives/sites/sites.txt', url);
 };
 
 // checks paths.archivedSites for presence of URL
 // returns a boolean indicating whether or not the URL is in archived sites
-exports.isUrlArchived = function(url) {
+exports.isUrlArchived = function(url, cb) {
   if (!paths.archivedSites.includes(url)) {
     return false;
   }
@@ -69,5 +74,4 @@ exports.isUrlArchived = function(url) {
 
 // retrieves (from the internet) the index.html of the requested URL
 exports.downloadUrls = function() {
-  // fs.write(fd, string[, position[, encoding]], callback);
 };
