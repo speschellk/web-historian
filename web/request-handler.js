@@ -1,10 +1,11 @@
 // I am the function passed into the web server. I take the request and response objects.
-// I am shared with basic-server.js (web server)
 
-// access to Node's path module
+// Node's path module
 var path = require('path');
+// Node's fs module
+var fs = require('fs');
 
-// access to archive-helpers
+// archive-helpers
 var archive = require('../helpers/archive-helpers');
 // archive.readListOfUrls
 // archive.isUrlInList
@@ -12,29 +13,52 @@ var archive = require('../helpers/archive-helpers');
 // archive.isUrlArchived
 // archive.downloadUrls
 
-// access to http-helpers
+// http-helpers
 var httpHelp = require('./http-helpers');
-
-// access to worker server
+// worker server
 var worker = require('../workers/htmlfetcher');
 
-// access to Node's fs methods
-var fs = require('fs');
 
-
-// I am the request handler function. I take the request and response objects.
 exports.handleRequest = function (req, res) {
   // web server receives a req from the client. this req is a GET request for a webpage
 
-  if (req.method === 'GET' && req.url === '/') {
-    fs.readFile(archive.paths.siteAssets + '/index.html', function(err, contents) {
-      // console.log('contents are ', contents.toString());
-      if (err) {
-        console.log(err);
-      }
-      res.writeHead(200, httpHelp.headers);
-      res.end(contents.toString());
-    });
+  if (req.method === 'GET') {
+    if (req.url === '/') {
+      fs.readFile(archive.paths.siteAssets + '/index.html', function(err, data) {
+        // console.log('data are ', data.toString());
+        if (err) {
+          console.log(err);
+        }
+        res.writeHead(200, httpHelp.headers);
+        res.end(data.toString());
+      });
+
+    // check that all legit paths are let through
+    } else if (req.url[0] === '/' && !req.url.includes('.com')) {
+      console.log(req.url);
+      res.writeHead(404, httpHelp.headers);
+      res.end();
+
+    } else {
+      //check the archive
+      // if it's there, serve it up
+      // if it's not, send back the loading page
+      fs.readFile(archive.paths.archivedSites + '/' + req.url, function(err, data) {
+        if (err) {
+          console.log(err);
+        }
+        res.writeHead(200, httpHelp.headers);
+        res.end(data.toString());
+      });
+    }
+  }
+
+  // finish post method
+  if (req.method === 'POST') {
+    if (!archive.isUrlInList) {
+      fs.write();
+    }
+    console.log('in the POST method');
   }
 
     // // add requested URL to sites.txt if it isn't already there

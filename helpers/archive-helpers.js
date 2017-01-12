@@ -37,14 +37,14 @@ exports.initialize = function(pathsObj) {
 // ** WORKER SERVER NEEDS ACCESS TO ALL OF THESE FUNCTIONS ** //
 
 // reads URLs in archives/sites.txt
-exports.readListOfUrls = function(cb) {
-  fs.readFile('../archives/sites/sites.txt', 'utf8', function(err, data) {
+exports.readListOfUrls = function() {
+  fs.readFile(paths.list, function(err, data) {
     console.log('in fs.readFile');
     if (!err) {
-      console.log(data);
+      console.log(data.toString());
+    } else {
+      console.log('error');
     }
-    console.log('error');
-    done(err);
   });
 
 };
