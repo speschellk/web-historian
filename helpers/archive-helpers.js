@@ -37,21 +37,22 @@ exports.initialize = function(pathsObj) {
 // ** WORKER SERVER NEEDS ACCESS TO ALL OF THESE FUNCTIONS ** //
 
 // reads URLs in archives/sites.txt
-exports.readListOfUrls = function() {
-  fs.readFile(paths.list, function(err, data) {
-    console.log('in fs.readFile');
+exports.readListOfUrls = function(cb) {
+  // console.log('cb is ', cb);
+  fs.readFile(this.paths.list, 'utf8', function(err, urls) {
     if (!err) {
-      console.log(data.toString());
+      urls = urls.toString();
+      urls = urls.split('\n');
+      return cb(err, urls);
     } else {
       console.log('error');
     }
   });
-
 };
 
 // checks paths.list value for presence of particular URL
 // returns a boolean indicating whether or not the URL is in this list of archived sites
-exports.isUrlInList = function(url) {
+exports.isUrlInList = function(url, cb) {
   if (!paths.list.includes(url)) {
     return false;
   }

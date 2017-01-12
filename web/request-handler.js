@@ -33,7 +33,7 @@ exports.handleRequest = function (req, res) {
         res.end(data.toString());
       });
 
-    // check that all legit paths are let through
+    // ****check that all legit paths are let through**** //
     } else if (req.url[0] === '/' && !req.url.includes('.com')) {
       console.log(req.url);
       res.writeHead(404, httpHelp.headers);
@@ -55,7 +55,9 @@ exports.handleRequest = function (req, res) {
 
   // finish post method
   if (req.method === 'POST') {
+    // if client submits a site that isn't already in archives/sites.txt
     if (!archive.isUrlInList) {
+      // write it into archives/sites.txt (without replacing the entire file?)
       fs.write();
     }
     console.log('in the POST method');
