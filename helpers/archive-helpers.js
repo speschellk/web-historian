@@ -38,11 +38,9 @@ exports.initialize = function(pathsObj) {
 
 // reads URLs in archives/sites.txt
 exports.readListOfUrls = function(cb) {
-  // console.log('cb is ', cb);
   fs.readFile(this.paths.list, 'utf8', function(err, urls) {
     if (!err) {
-      urls = urls.toString();
-      urls = urls.split('\n');
+      urls = urls.toString().split('\n');
       return cb(err, urls);
     } else {
       console.log('error');
@@ -51,17 +49,29 @@ exports.readListOfUrls = function(cb) {
 };
 
 // checks paths.list value for presence of particular URL
-// returns a boolean indicating whether or not the URL is in this list of archived sites
+// returns a boolean indicating whether the URL is in this list of archived sites
 exports.isUrlInList = function(url, cb) {
-  if (!paths.list.includes(url)) {
-    return false;
-  }
-  return true;
+  this.readListOfUrls(function(err, urls) {
+    if (!err) {
+      for (var i = 0; i < urls.length; i++) {
+        if (urls[i] === url) {
+          exists = true;
+          return cb(err, exists);
+        }
+      }
+    }
+    exists = false;
+    return cb(err, exists);
+  });
 };
 
 // if !isUrlInList, writes URL to list
 exports.addUrlToList = function(url, cb) {
-  fs.writeFile('../archives/sites/sites.txt', url);
+  fs.writeFile(this.paths.list, url, function(err) {
+    if (err) {
+      console.log('error');
+    }
+  });
 };
 
 // checks paths.archivedSites for presence of URL
