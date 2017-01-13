@@ -38,7 +38,7 @@ exports.initialize = function(pathsObj) {
 
 // reads URLs in archives/sites.txt
 exports.readListOfUrls = function(cb) {
-  fs.readFile(this.paths.list, 'utf8', function(err, urls) {
+  fs.readFile(exports.paths.list, 'utf8', function(err, urls) {
     if (!err) {
       urls = urls.toString().split('\n');
       return cb(err, urls);
@@ -67,20 +67,36 @@ exports.isUrlInList = function(url, cb) {
 
 // if !isUrlInList, writes URL to list
 exports.addUrlToList = function(url, cb) {
-  fs.writeFile(this.paths.list, url, function(err) {
-    if (err) {
+  fs.appendFile(exports.paths.list, url + '\n', function(error) {
+    if (!error) {
+      return cb();
+    } else {
       console.log('error');
     }
   });
 };
 
 // checks paths.archivedSites for presence of URL
-// returns a boolean indicating whether or not the URL is in archived sites
+// returns a cb indicating whether or not the URL is in archived sites
 exports.isUrlArchived = function(url, cb) {
-  if (!paths.archivedSites.includes(url)) {
-    return false;
-  }
-  return true;
+  // console.log('url is ', url);
+
+  fs.stat(exports.paths.archivedSites + '/' + url, 'utf8', function(err, stats) {
+    // console.log('full path is ', exports.paths.archivedSites + '/' + url);
+    // console.log('in write file');
+    
+    if (!err) {
+      // console.log('in error - file exists');
+
+      //stats
+      exists = true;
+      return cb(err, exists);
+    } else {
+      // console.log('in else - file does not exist');
+      exists = false;
+      return cb(err, exists);
+    }
+  });
 };
 
 // retrieves (from the internet) the index.html of the requested URL
