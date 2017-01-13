@@ -55,13 +55,11 @@ exports.isUrlInList = function(url, cb) {
     if (!err) {
       for (var i = 0; i < urls.length; i++) {
         if (urls[i] === url) {
-          exists = true;
-          return cb(err, exists);
+          return cb(err, true);
         }
       }
     }
-    exists = false;
-    return cb(err, exists);
+    return cb(err, false);
   });
 };
 
@@ -79,23 +77,14 @@ exports.addUrlToList = function(url, cb) {
 // checks paths.archivedSites for presence of URL
 // returns a cb indicating whether or not the URL is in archived sites
 exports.isUrlArchived = function(url, cb) {
-  // console.log('url is ', url);
-
-  fs.stat(exports.paths.archivedSites + '/' + url, 'utf8', function(err, stats) {
-    // console.log('full path is ', exports.paths.archivedSites + '/' + url);
-    // console.log('in write file');
-    
+  fs.stat(exports.paths.archivedSites + '/' + url, function(err, stats) {
     if (!err) {
-      // console.log('in error - file exists');
-
-      //stats
       exists = true;
-      return cb(err, exists);
     } else {
-      // console.log('in else - file does not exist');
       exists = false;
-      return cb(err, exists);
+      err = null;
     }
+    return cb(err, exists);
   });
 };
 
