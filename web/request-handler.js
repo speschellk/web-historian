@@ -1,21 +1,7 @@
-// I am the function passed into the web server. I take the request and response objects.
-
-// Node's path module
 var path = require('path');
-// Node's fs module
 var fs = require('fs');
-
-// archive-helpers
 var archive = require('../helpers/archive-helpers');
-// archive.readListOfUrls
-// archive.isUrlInList
-// archive.addUrlToList
-// archive.isUrlArchived
-// archive.downloadUrls
-
-// http-helpers
 var httpHelp = require('./http-helpers');
-// worker server
 var worker = require('../workers/htmlfetcher');
 
 
@@ -42,10 +28,10 @@ exports.handleRequest = function (req, res) {
     } else {
       //check the archive
       // if it's there, serve it up
-      // if it's not, send back the loading page
       fs.readFile(archive.paths.archivedSites + '/' + req.url, function(err, data) {
         if (err) {
           console.log(err);
+          // loading page
         }
         res.writeHead(200, httpHelp.headers);
         res.end(data.toString());
@@ -53,30 +39,51 @@ exports.handleRequest = function (req, res) {
     }
   }
 
-  // finish post method
+  // post method
   if (req.method === 'POST') {
     // if client submits a site that isn't already in archives/sites.txt
-    if (!archive.isUrlInList) {
-      // write it into archives/sites.txt (without replacing the entire file?)
-      fs.write();
-    }
-    console.log('in the POST method');
+    archive.isUrlInList(req.url, function(err, exists) {
+      console.log('url is ', req.url);
+      console.log('in isUrlInList check');
+      if (!err) {
+        console.log('no error in isUrlInList');
+        if (!exists) {
+          console.log('url is not in archives/sites.txt');
+          archive.addUrlToList(req.url, function(err) {
+            console.log('in addUrlToList');
+            if (err) {
+              console.log('error in addUrlToList');
+            }
+          });
+        } else {
+          console.log('url is in archives/sites.txt');
+          archive.isUrlArchived(url, function(err, exists) {
+            console.log('in isUrlArchived');
+            if (!err) {
+              console.log('no error in isUrlArchived');
+              res.writeHead(302, httpHelp.headers);
+              fs.readFile(archive.paths.archivedSites + '/' + url, 'utf8', function(err, data) {
+                if (err) {
+                  console.log(err);
+                } else {
+                  res.end(data.toString());
+                }
+              });
+            } else {
+              console.log('error in isUrlArchived');
+              fs.readFile(archive.paths.siteAssets + '/loading.html', function(err, data) {
+                if (err) {
+                  console.log(err);
+                }
+                res.end(data.toString());
+              });
+            }
+          });
+        }
+      } else {
+        console.log('error in isUrlInList');
+      }
+    });
   }
 
-    // // add requested URL to sites.txt if it isn't already there
-    // if (!archive.isUrlInList(req.url)) {}
-
-    // // check if the corresponding index.html is already in archives/sites
-    // if (!archive.isUrlArchived(req.url)) {
-    //   // return loading.html
-    // }
-    // // return index.html archive
-
-    // If users submit a page you already have, you should auto-redirect 
-    // them to either your archived version of that page, or to loading.html 
-    // if the page has not yet been loaded
-  // res.writeHead(statusCode, headers);
-
-  // res.end(JSON.stringify(statusCode, '/Users/student/Desktop/hrsf53-web-historian/web/public/index.html'), done);
-  // res.end(statusCode, archive.paths.list, done);
 };
