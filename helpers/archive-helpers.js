@@ -1,8 +1,5 @@
-// ARCHIVE HELPER METHODS
 var fs = require('fs');
-// Node.js's path module
 var path = require('path');
-// access to underscore library (for initialize function)
 var _ = require('underscore');
 
 /*
@@ -12,11 +9,6 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
-// PATHS - an object that contains references to the siteAssets, archivedSites, and list pathnames
-
-// siteAssets: file directory path + /web/public  --> like /foo/bar/baz/asdf/web/public
-// archivedSites: file directory path + /archives/sites  --> like /foo/bar/baz/asdf/archives/sites
-// list: file directory path + /archives/sites.txt --> like /foo/bar/baz/asdf/archives/sites.txt
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
@@ -31,10 +23,7 @@ exports.initialize = function(pathsObj) {
 };
 
 
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
-
-// ** WORKER SERVER NEEDS ACCESS TO ALL OF THESE FUNCTIONS ** //
+// HELPER METHODS
 
 // reads URLs in archives/sites.txt
 exports.readListOfUrls = function(cb) {
@@ -48,8 +37,7 @@ exports.readListOfUrls = function(cb) {
   });
 };
 
-// checks paths.list value for presence of particular URL
-// returns a boolean indicating whether the URL is in this list of archived sites
+// checks archives/sites.txt for presence of particular URL
 exports.isUrlInList = function(url, cb) {
   this.readListOfUrls(function(err, urls) {
     if (!err) {
@@ -63,7 +51,7 @@ exports.isUrlInList = function(url, cb) {
   });
 };
 
-// if !isUrlInList, writes URL to list
+// if url is not in archives/sites.txt, adds it
 exports.addUrlToList = function(url, cb) {
   fs.appendFile(exports.paths.list, url + '\n', function(error) {
     if (!error) {
@@ -74,8 +62,7 @@ exports.addUrlToList = function(url, cb) {
   });
 };
 
-// checks paths.archivedSites for presence of URL
-// returns a cb indicating whether or not the URL is in archived sites
+// checks archives/sites for presence of site file
 exports.isUrlArchived = function(url, cb) {
   fs.stat(exports.paths.archivedSites + '/' + url, function(err, stats) {
     if (!err) {
@@ -90,4 +77,5 @@ exports.isUrlArchived = function(url, cb) {
 
 // retrieves (from the internet) the index.html of the requested URL
 exports.downloadUrls = function() {
+
 };
